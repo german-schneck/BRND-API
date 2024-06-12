@@ -17,7 +17,7 @@ const logger = new Logger('APISystem');
 
 export const getConfig = () => ({
   identifier: process.env.IDENTIFIER || 'BRND API',
-  version: '1.0',
+  version: process.env.VERSION || '1.0',
   isProduction: process.env.ENV === 'prod',
   runtime: {
     host: process.env.HOST || '',
