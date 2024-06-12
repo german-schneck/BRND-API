@@ -35,9 +35,10 @@ export class AuthorizationGuard implements CanActivate {
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
     try {
-      const req: Request<{ user: CurrentUser }> = context
+      const req = context
         .switchToHttp()
-        .getRequest();
+        .getRequest<Request & { user: CurrentUser }>();
+
       const jwt: string = req.cookies['Authorization'];
 
       if (!jwt) throw new UnauthorizedException('Token not authenticated');

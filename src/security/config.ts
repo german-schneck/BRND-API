@@ -35,32 +35,7 @@ export const getConfig = () => ({
     password: process.env.DATABASE_PASSWORD,
     requireSSL: process.env.DATABASE_SSL === 'true' || false,
   },
-  tools: {
-    aws: {
-      accessKey: process.env.AWS_ACCESS_KEY_ID,
-      secretKey: process.env.AWS_SECRET_ACCESS_KEY,
-      region: process.env.AWS_REGION,
-
-      s3: {
-        bucketName: process.env.AWS_S3_BUCKET_NAME,
-      },
-    },
-  },
-  getToolsList: () => {
-    const { aws } = getConfig().tools;
-
-    const getState = (isGood: boolean, service: string) =>
-      logger.log(isGood ? `✅ ${service}` : `❗ ${service}`);
-
-    const credentialsComplete = !!(
-      aws.accessKey &&
-      aws.secretKey &&
-      aws.region &&
-      aws.s3.bucketName
-    );
-
-    void getState(credentialsComplete, 'AWS Credentials and S3.');
-  },
+  tools: {},
   startup: () => {
     logger.log(`
              ___  ___  _  _____    ___   ___  ____

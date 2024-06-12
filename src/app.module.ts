@@ -21,8 +21,10 @@ import { User } from './models';
       database: getConfig().db.name,
       entities: [User],
       synchronize: true,
-      ssl: { rejectUnauthorized: false },
       logging: 'all',
+      extra: {
+        insecureAuth: true,
+      },
     }),
   ],
 })

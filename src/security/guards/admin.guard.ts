@@ -21,11 +21,10 @@ export class AdminGuard extends AuthorizationGuard {
       throw new UnauthorizedException('You are not authenticated');
     }
 
-    const req: Request<{ user: CurrentUser }> = context
+    const req = context
       .switchToHttp()
-      .getRequest();
-
-    const user = req.user as CurrentUser;
+      .getRequest<Request & { user: CurrentUser }>();
+    const user = req.user;
 
     if (user.role !== UserRoleEnum.ADMIN) {
       throw new ForbiddenException(
