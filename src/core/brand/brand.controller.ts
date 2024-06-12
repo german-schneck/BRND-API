@@ -1,5 +1,6 @@
 // Dependencies
 import { Controller, Get, Param } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 // Services
 import { BrandService } from './services';
@@ -7,6 +8,7 @@ import { BrandService } from './services';
 // Models
 import { Brand } from '../../models';
 
+@ApiTags('brand-service')
 @Controller('brand-service')
 export class BrandController {
   constructor(private readonly brandService: BrandService) {}

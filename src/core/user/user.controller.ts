@@ -8,6 +8,7 @@ import {
   Patch,
   UseGuards,
 } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 
 // Services
 import { UserService } from './services';
@@ -18,6 +19,7 @@ import { AdminGuard } from '../../security/guards';
 // Models
 import { User } from '../../models';
 
+@ApiTags('user-service')
 @Controller('user-service')
 export class UserController {
   constructor(private readonly userService: UserService) {}
