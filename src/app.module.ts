@@ -7,7 +7,9 @@ import CoreModules from './core';
 
 // Security
 import { getConfig } from './security/config';
-import { User } from './models';
+
+// Models
+import { User, Brand } from './models';
 
 @Module({
   imports: [
@@ -19,7 +21,7 @@ import { User } from './models';
       username: getConfig().db.username,
       password: getConfig().db.password,
       database: getConfig().db.name,
-      entities: [User],
+      entities: [User, Brand],
       synchronize: true,
       logging: 'all',
       extra: {
