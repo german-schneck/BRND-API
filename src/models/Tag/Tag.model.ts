@@ -10,44 +10,25 @@ import {
   OneToMany,
 } from 'typeorm';
 
-import { UserBrandVotes } from '../UserBrandVotes';
 import { BrandTags } from '../BrandTags';
 
 /**
- * @class Brand
- * @classdesc Brand class represents a brand in the system.
+ * @class Tag
+ * @classdesc Tag class represents a Tag in the system.
  */
-@Entity({ name: 'brands' })
-export class Brand {
+@Entity({ name: 'tags' })
+export class Tag {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
   name: string;
 
-  @Column()
-  url: string;
-
-  @Column()
-  description: string;
-
-  @Column()
-  followerCount: number;
-
-  @Column()
-  imageUrl: string;
-
-  @Column()
-  score: number;
-
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @OneToMany(() => UserBrandVotes, (userBrandVotes) => userBrandVotes.brand)
-  userBrandVotes: UserBrandVotes[];
 
   @OneToMany(() => BrandTags, (brandTags) => brandTags.brand)
   brandTags: BrandTags[];

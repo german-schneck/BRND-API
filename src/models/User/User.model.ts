@@ -7,7 +7,10 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+
+import { UserBrandVotes } from '../UserBrandVotes';
 
 // Types
 import { UserRoleEnum } from './';
@@ -20,6 +23,9 @@ import { UserRoleEnum } from './';
 export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column()
+  fid: number;
 
   @Column()
   username: string;
@@ -35,4 +41,7 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => UserBrandVotes, (userBrandVotes) => userBrandVotes.user)
+  userBrandVotes: UserBrandVotes[];
 }

@@ -17,6 +17,6 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "typeRoots": ["./src/index.d.ts"],
+    "typeRoots": ["./src/index.d.ts"]
   }
 }
