@@ -110,7 +110,7 @@ type Domains = Record<'LOCAL' | 'STAGING' | 'PRO', string[]>;
  * PRO: Domains for the production environment.
  */
 const domains: Domains = {
-  LOCAL: ['http://127.0.0.1:3000'],
+  LOCAL: ['http://127.0.0.1:5173', 'http://localhost:5173'],
   STAGING: [],
   PRO: [getConfig().runtime.host],
 };

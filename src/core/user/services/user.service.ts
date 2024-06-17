@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 // Models
-import { User } from '../../../models';
+import { User, UserRoleEnum } from '../../../models';
 
 @Injectable()
 export class UserService {
@@ -37,6 +37,71 @@ export class UserService {
         relations,
       }),
     });
+  }
+
+  /**
+   * Retrieves a user by their Firebase ID.
+   *
+   * @param {User['fid']} fid - The Firebase ID of the user to retrieve.
+   * @returns {Promise<User | undefined>} The user entity or undefined if not found.
+   */
+  async getByFid(fid: User['fid']): Promise<User | undefined> {
+    return this.userRepository.findOne({
+      where: {
+        fid,
+      },
+    });
+  }
+
+  /**
+   * Upserts a user based on the provided Firebase ID. If the user exists, it updates the user data; otherwise, it creates a new user.
+   *
+   * @param {User['fid']} fid - The Firebase ID of the user.
+   * @param {Partial<User>} data - An object containing the fields to update or create.
+   * @returns {Promise<User>} The upserted user entity.
+   */
+  async upsert(fid: User['fid'], data: Partial<User>): Promise<User> {
+    let user = await this.userRepository.findOne({
+      where: {
+        fid,
+      },
+    });
+
+    if (user) {
+      Object.assign(user, data);
+    } else {
+      user = this.userRepository.create({
+        fid,
+        ...data,
+        role: UserRoleEnum.USER,
+      });
+    }
+
+    await this.userRepository.save(user);
+    return user;
+  }
+
+  /**
+   * Creates a new user with the provided Firebase ID, username, and photo URL.
+   *
+   * @param {User['fid']} fid - The Firebase ID of the user.
+   * @param {User['username']} username - The username of the user.
+   * @param {User['photoUrl']} photoUrl - The photo URL of the user.
+   * @returns {Promise<User>} The newly created user entity.
+   */
+  async create(
+    fid: User['fid'],
+    username: User['username'],
+    photoUrl: User['photoUrl'],
+  ): Promise<User> {
+    const newUser = this.userRepository.create({
+      fid,
+      username,
+      photoUrl,
+    });
+
+    await this.userRepository.save(newUser);
+    return newUser;
   }
 
   /**

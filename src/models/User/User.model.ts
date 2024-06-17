@@ -24,7 +24,9 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
+  @Column({
+    unique: true,
+  })
   fid: number;
 
   @Column()
@@ -32,8 +34,6 @@ export class User {
 
   @Column()
   photoUrl: string;
-
-  @Column()
   role: UserRoleEnum;
 
   @CreateDateColumn()
