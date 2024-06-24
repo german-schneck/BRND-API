@@ -66,7 +66,7 @@ export class AuthService {
 
     const { username, photoUrl } = credentials;
 
-    const user = await this.userService.upsert(fid, {
+    const { isCreated, user } = await this.userService.upsert(fid, {
       username,
       photoUrl,
     });
@@ -81,6 +81,6 @@ export class AuthService {
       key,
     );
 
-    return { token, user };
+    return { token, isCreated, user };
   }
 }

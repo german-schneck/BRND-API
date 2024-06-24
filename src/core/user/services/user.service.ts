@@ -54,13 +54,17 @@ export class UserService {
   }
 
   /**
-   * Upserts a user based on the provided Firebase ID. If the user exists, it updates the user data; otherwise, it creates a new user.
+   * Upserts a user based on the provided Firebase ID. This method checks if a user with the given Firebase ID exists. If the user exists, it updates the user with the provided data; otherwise, it creates a new user with the given data and assigns a default role of USER.
    *
-   * @param {User['fid']} fid - The Firebase ID of the user.
-   * @param {Partial<User>} data - An object containing the fields to update or create.
-   * @returns {Promise<User>} The upserted user entity.
+   * @param {User['fid']} fid - The Firebase ID of the user to upsert.
+   * @param {Partial<User>} data - An object containing the fields to update for an existing user or to set for a new user.
+   * @returns {Promise<{isCreated: boolean; user: User}>} An object containing a boolean flag indicating if a new user was created and the upserted user entity.
    */
-  async upsert(fid: User['fid'], data: Partial<User>): Promise<User> {
+  async upsert(
+    fid: User['fid'],
+    data: Partial<User>,
+  ): Promise<{ isCreated: boolean; user: User }> {
+    let isCreated: boolean = false;
     let user = await this.userRepository.findOne({
       where: {
         fid,
@@ -70,6 +74,7 @@ export class UserService {
     if (user) {
       Object.assign(user, data);
     } else {
+      isCreated = true;
       user = this.userRepository.create({
         fid,
         ...data,
@@ -78,7 +83,11 @@ export class UserService {
     }
 
     await this.userRepository.save(user);
-    return user;
+
+    return {
+      isCreated,
+      user,
+    };
   }
 
   /**

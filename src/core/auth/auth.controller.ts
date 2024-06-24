@@ -65,7 +65,7 @@ export class AuthController {
         );
       }
 
-      const { user, token } = data;
+      const { user, isCreated, token } = data;
 
       res.cookie('Authorization', token, {
         maxAge: 6 * 60 * 60 * 1000, // 6 hours
@@ -75,10 +75,13 @@ export class AuthController {
         domain: getConfig().session.domain,
       });
 
-      return hasResponse(res, 'logIn', {
-        fid: user.fid.toString(),
-        username: user.username,
-        photoUrl: user.photoUrl,
+      return hasResponse(res, {
+        isCreated,
+        user: {
+          fid: user.fid.toString(),
+          username: user.username,
+          photoUrl: user.photoUrl,
+        },
       });
     } catch (error) {
       return hasError(
@@ -105,7 +108,7 @@ export class AuthController {
   async logOut(@Req() req: Request, @Res() res: Response) {
     try {
       res.clearCookie('Authorization');
-      return hasResponse(res, 'logOut', 'Successfully logged out.');
+      return hasResponse(res, 'Successfully logged out.');
     } catch (error) {
       return hasError(
         res,
@@ -132,7 +135,7 @@ export class AuthController {
     try {
       const user = await this.userService.getById(session.id);
 
-      return hasResponse(res, 'getMe', {
+      return hasResponse(res, {
         id: user.id,
         username: user.username,
         photoUrl: user.photoUrl,

@@ -6,15 +6,11 @@ import { Response } from 'express';
  * Sends a JSON response with a status of 200 (OK) including the provided data and action.
  *
  * @param res - The Express response object.
- * @param action - A string describing the action performed.
  * @param data - The data to be included in the response.
  * @returns The response object with the status set to 200 and the provided data and action in JSON format.
  */
-export const hasResponse = <T>(res: Response, action: string, data: T) =>
-  res.status(HttpStatus.OK).json({
-    data,
-    action,
-  });
+export const hasResponse = <T>(res: Response, data: T) =>
+  res.status(HttpStatus.OK).json(data);
 
 /**
  * Sends a JSON response with the specified status including the provided data and action.
