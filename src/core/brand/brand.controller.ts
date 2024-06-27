@@ -13,7 +13,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
 // Services
-import { BrandService } from './services';
+import { BrandOrderType, BrandService } from './services';
 
 // Models
 import { Brand, CurrentUser } from '../../models';
@@ -45,15 +45,17 @@ export class BrandController {
   /**
    * Retrieves all brands with pagination.
    *
+   * @param {BrandOrderType} order - The order in which to sort the brands.
    * @param {string} search - The search query to filter brands.
    * @param {number} pageId - The ID of the page to retrieve.
    * @param {number} limit - The number of brands to retrieve per page.
    * @param {Response} res - The response object.
    * @returns {Promise<Response>} A response object containing the page ID, total count of brands, and an array of brand objects.
    */
-  @Get('/all')
+  @Get('/list')
   @UseGuards(AuthorizationGuard)
   async getAllBrands(
+    @Query('order') order: BrandOrderType,
     @Query('search') search: string,
     @Query('pageId') pageId: number,
     @Query('limit') limit: number,
@@ -62,6 +64,7 @@ export class BrandController {
     const [brands, count] = await this.brandService.getAll(
       ['id', 'name', 'url', 'imageUrl'],
       [],
+      order,
       search,
       pageId,
       limit,
@@ -112,5 +115,32 @@ export class BrandController {
         error.toString(),
       );
     }
+  }
+
+  /**
+   * Handles the request to create a new brand.
+   *
+   * @param {CurrentUser} user - The current user session.
+   * @param {{ name: string }} body - An object containing the name of the new brand.
+   */
+  @Post('/request')
+  @UseGuards(AuthorizationGuard)
+  async requestNewBrand(
+    @Session() user: CurrentUser,
+    @Body() body: { name: string },
+  ) {
+    console.log({ user, body });
+  }
+
+  /**
+   * Handles the request to follow a brand.
+   *
+   * @param {CurrentUser} user - The current user session.
+   * @param {string} id - The ID of the brand to follow.
+   */
+  @Post('/:id/follow')
+  @UseGuards(AuthorizationGuard)
+  async followBrand(@Session() user: CurrentUser, @Param('id') id: string) {
+    console.log({ user, id });
   }
 }

@@ -1,6 +1,4 @@
  7.⁠ ⁠Request for adding a brand
- 8.⁠ ⁠Get all new brands
- 9.⁠ ⁠Get trending brands
 12.⁠ ⁠User follows a brand in farcaster
 
 
@@ -12,3 +10,5 @@ DONE:
  3.⁠ ⁠Get all the brands 
  4.⁠ ⁠Get all the brands searching by name
 10.⁠ ⁠Get all user votes (podiums)
+ 8.⁠ ⁠Get all new brands
+ 9.⁠ ⁠Get trending brands

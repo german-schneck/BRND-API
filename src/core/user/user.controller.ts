@@ -74,6 +74,15 @@ export class UserController {
     return this.userService.delete(id);
   }
 
+  /**
+   * Retrieves the vote history of a user.
+   *
+   * @param {User['id']} id - The ID of the user whose vote history is to be retrieved.
+   * @param {number} pageId - The page number for pagination.
+   * @param {number} limit - The number of records per page.
+   * @param {Response} res - The response object.
+   * @returns {Promise<Response>} The response containing the user's vote history.
+   */
   @Get('/user/:id/vote-history')
   async getUserVoteHistory(
     @Param('id') id: User['id'],

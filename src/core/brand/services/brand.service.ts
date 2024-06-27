@@ -9,6 +9,7 @@ import { Brand, UserBrandVotes } from '../../../models';
 // Services
 import { UserService } from '../../user/services';
 import { User } from '../../../security/decorators';
+import { BrandOrderType } from '.';
 
 @Injectable()
 export class BrandService {
@@ -58,6 +59,7 @@ export class BrandService {
   async getAll(
     select: (keyof Brand)[] = [],
     relations: (keyof Brand)[] = [],
+    order: BrandOrderType = 'all',
     searchName: string = '',
     pageId: number = 1,
     limit: number = 15,
@@ -81,6 +83,18 @@ export class BrandService {
 
       ...(relations.length > 0 && {
         relations,
+      }),
+
+      ...(order === 'new' && {
+        order: {
+          createdAt: 'DESC',
+        },
+      }),
+
+      ...(order === 'trending' && {
+        order: {
+          followerCount: 'DESC',
+        },
       }),
     });
   }
