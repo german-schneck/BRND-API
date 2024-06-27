@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  // Param,
   Post,
   Req,
   Res,
@@ -18,7 +19,7 @@ import { UserService } from '../user/services';
 
 // Security
 import { AuthorizationGuard } from '../../security/guards';
-import { getConfig } from '../../security/config';
+// import { getConfig } from '../../security/config';
 import { Session, User } from '../../security/decorators';
 
 // Utils
@@ -69,10 +70,10 @@ export class AuthController {
 
       res.cookie('Authorization', token, {
         maxAge: 6 * 60 * 60 * 1000, // 6 hours
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: true,
-        domain: getConfig().session.domain,
+        // httpOnly: true,
+        // sameSite: 'lax',
+        // secure: true,
+        // domain: getConfig().session.domain,
       });
 
       return hasResponse(res, {
@@ -133,14 +134,14 @@ export class AuthController {
   @UseGuards(AuthorizationGuard)
   async getMe(@Session() session: User, @Res() res: Response) {
     try {
-      const user = await this.userService.getById(session.id);
+      const user = await this.userService.getById(session.id, [
+        'id',
+        'username',
+        'photoUrl',
+        'createdAt',
+      ]);
 
-      return hasResponse(res, {
-        id: user.id,
-        username: user.username,
-        photoUrl: user.photoUrl,
-        createdAt: user.createdAt,
-      });
+      return hasResponse(res, user);
     } catch (error) {
       return hasError(
         res,

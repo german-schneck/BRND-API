@@ -1,10 +1,10 @@
 // Dependencies
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 
 // Models
-import { User, UserRoleEnum } from '../../../models';
+import { User, UserBrandVotes, UserRoleEnum } from '../../../models';
 
 @Injectable()
 export class UserService {
@@ -159,5 +159,38 @@ export class UserService {
     await this.userRepository.remove(user);
 
     return true;
+  }
+
+  /**
+   * Retrieves the votes of a user for a specific day.
+   *
+   * @param {User['id']} id - The ID of the user whose votes are to be retrieved.
+   * @param {number} unixDate - The Unix timestamp representing the day for which votes are to be retrieved.
+   * @returns {Promise<UserBrandVotes[]>} A promise that resolves to an array of the user's votes for the specified day.
+   */
+  async getUserVotes(
+    id: User['id'],
+    unixDate: number,
+  ): Promise<UserBrandVotes[]> {
+    const date = new Date(unixDate * 1000);
+    const startDate = new Date(date.setHours(0, 0, 0, 0));
+    const endDate = new Date(date.setHours(23, 59, 59, 999));
+
+    const user = await this.userRepository.findOne({
+      select: ['userBrandVotes'],
+      where: {
+        id,
+        userBrandVotes: {
+          date: Between(startDate, endDate),
+        },
+      },
+      relations: ['userBrandVotes', 'userBrandVotes.brand'],
+    });
+
+    const userBrandVotes = user
+      ? user.userBrandVotes.sort((a, b) => a.position - b.position)
+      : [];
+
+    return userBrandVotes;
   }
 }

@@ -5,9 +5,9 @@ import {
   Get,
   Param,
   Post,
-  Put,
   Query,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
@@ -16,10 +16,14 @@ import { Response } from 'express';
 import { BrandService } from './services';
 
 // Models
-import { Brand } from '../../models';
+import { Brand, CurrentUser } from '../../models';
 
 // Utils
 import { HttpStatus, hasError, hasResponse } from '../../utils';
+
+// Utils
+import { AuthorizationGuard } from '../../security/guards';
+import { Session } from '../../security/decorators';
 
 @ApiTags('brand-service')
 @Controller('brand-service')
@@ -33,34 +37,11 @@ export class BrandController {
    * @returns {Promise<Brand | undefined>} The brand entity or undefined if not found.
    */
   @Get('/brand/:id')
-  getBrandById(@Param('id') id: Brand['id']) {
+  @UseGuards(AuthorizationGuard)
+  getBrandById(@Param('id') id: Brand['id']): Promise<Brand | undefined> {
     return this.brandService.getById(id);
   }
 
-  @Put('/vote')
-  async voteBrands(@Body() { ids }: { ids: string[] }, @Res() res: Response) {
-    if (!Array.isArray(ids) || ids.length !== 3) {
-      return hasError(
-        res,
-        HttpStatus.BAD_REQUEST,
-        'voteBrands',
-        'Invalid input: exactly 3 brand IDs are required.',
-      );
-    }
-
-    try {
-      // Assuming there's a method in brandService to handle the voting logic
-      //await this.brandService.voteForBrands(ids);
-      return hasResponse(res, { message: 'Vote recorded successfully.' });
-    } catch (error) {
-      return hasError(
-        res,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        'voteBrands',
-        'An unexpected error occurred.',
-      );
-    }
-  }
   /**
    * Retrieves all brands with pagination.
    *
@@ -71,6 +52,7 @@ export class BrandController {
    * @returns {Promise<Response>} A response object containing the page ID, total count of brands, and an array of brand objects.
    */
   @Get('/all')
+  @UseGuards(AuthorizationGuard)
   async getAllBrands(
     @Query('search') search: string,
     @Query('pageId') pageId: number,
@@ -90,5 +72,45 @@ export class BrandController {
       count,
       brands,
     });
+  }
+
+  /**
+   * Records votes for multiple brands.
+   *
+   * @param {CurrentUser} user - The current user session.
+   * @param {{ ids: string[] }} ids - An object containing an array of brand IDs to vote for.
+   * @param {Response} res - The response object.
+   * @returns {Promise<Response>} A response object indicating the result of the vote operation.
+   */
+  @Post('/vote')
+  @UseGuards(AuthorizationGuard)
+  async voteBrands(
+    @Session() user: CurrentUser,
+    @Body() { ids }: { ids: string[] },
+    @Res() res: Response,
+  ): Promise<Response> {
+    try {
+      const votes = await this.brandService.voteForBrands(user.id, ids);
+      return hasResponse(
+        res,
+        votes.map((vote) => ({
+          id: vote.id,
+          date: vote.date,
+          position: vote.position,
+          brand: {
+            id: vote.brand.id,
+            name: vote.brand.name,
+            imageUrl: vote.brand.imageUrl,
+          },
+        })),
+      );
+    } catch (error) {
+      return hasError(
+        res,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        'voteBrands',
+        error.toString(),
+      );
+    }
   }
 }
