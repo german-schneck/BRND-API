@@ -26,14 +26,25 @@ export class User {
 
   @Column({
     unique: true,
+    nullable: false,
   })
   fid: number;
 
   @Column()
   username: string;
 
-  @Column()
+  @Column({
+    default: null,
+    nullable: true,
+  })
   photoUrl: string;
+
+  @Column({
+    default: 0,
+  })
+  points: number;
+
+  @Column()
   role: UserRoleEnum;
 
   @CreateDateColumn()

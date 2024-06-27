@@ -150,6 +150,8 @@ export class BrandService {
       await this.userBrandVotesRepository.save(vote);
     }
 
+    await this.userService.addPoints(userId, 3);
+
     return await this.userService.getUserVotes(userId, currentDate);
   }
 }

@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Patch,
+  Query,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -38,7 +39,13 @@ export class UserController {
    */
   @Get('/user/:id')
   getUserById(@Param('id') id: User['id']) {
-    return this.userService.getById(id, ['id', 'username', 'createdAt']);
+    return this.userService.getById(id, [
+      'id',
+      'username',
+      'photoUrl',
+      'points',
+      'createdAt',
+    ]);
   }
 
   /**
@@ -65,6 +72,17 @@ export class UserController {
   @UseGuards(AdminGuard)
   deleteUser(@Param('id') id: User['id']) {
     return this.userService.delete(id);
+  }
+
+  @Get('/user/:id/vote-history')
+  async getUserVoteHistory(
+    @Param('id') id: User['id'],
+    @Query('pageId') pageId: number,
+    @Query('limit') limit: number,
+    @Res() res: Response,
+  ) {
+    const history = await this.userService.getVotesHistory(id, pageId, limit);
+    return hasResponse(res, history);
   }
 
   /**

@@ -11,6 +11,9 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    @InjectRepository(UserBrandVotes)
+    private readonly userBrandVotesRepository: Repository<UserBrandVotes>,
   ) {}
 
   /**
@@ -139,6 +142,42 @@ export class UserService {
   }
 
   /**
+   * Adds points to a user's account.
+   *
+   * @param {User['id']} userId - The ID of the user to add points to.
+   * @param {number} points - The number of points to add.
+   * @throws {Error} If the user with the specified ID is not found.
+   */
+  async addPoints(userId: User['id'], points: number) {
+    const user = await this.getById(userId);
+
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found.`);
+    }
+
+    user.points += points;
+    await this.userRepository.save(user);
+  }
+
+  /**
+   * Removes points from a user's account.
+   *
+   * @param {User['id']} userId - The ID of the user to remove points from.
+   * @param {number} points - The number of points to remove.
+   * @throws {Error} If the user with the specified ID is not found.
+   */
+  async removePoints(userId: User['id'], points: number) {
+    const user = await this.getById(userId);
+
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found.`);
+    }
+
+    user.points -= points;
+    await this.userRepository.save(user);
+  }
+
+  /**
    * Deletes a user by their ID.
    *
    * @param {User['id']} id - The ID of the user to delete.
@@ -192,5 +231,50 @@ export class UserService {
       : [];
 
     return userBrandVotes;
+  }
+
+  /**
+   * Retrieves the vote history of a user, grouped by day.
+   *
+   * @param {User['id']} userId - The ID of the user whose vote history is to be retrieved.
+   * @returns {Promise<Record<string, UserBrandVotes[]>>} A promise that resolves to an object where keys are dates and values are arrays of votes for that day.
+   */
+  async getVotesHistory(
+    userId: User['id'],
+    pageId: number = 1,
+    limit: number = 15,
+  ): Promise<Record<string, UserBrandVotes[]>> {
+    const [votes, totalVotes] =
+      await this.userBrandVotesRepository.findAndCount({
+        where: { user: { id: userId } },
+        relations: ['brand'],
+        order: { date: 'DESC' },
+        skip: (pageId - 1) * limit,
+        take: limit,
+      });
+
+    if (totalVotes === 0) {
+      throw new Error(`User with ID ${userId} not found or has no votes.`);
+    }
+
+    const groupedVotes = votes.reduce((acc, vote) => {
+      const dateKey = vote.date.toISOString().split('T')[0]; // Group by date (YYYY-MM-DD)
+      if (!acc[dateKey]) {
+        acc[dateKey] = [];
+      }
+      acc[dateKey].push({
+        id: vote.id,
+        date: vote.date,
+        position: vote.position,
+        brand: {
+          id: vote.brand.id,
+          name: vote.brand.name,
+          imageUrl: vote.brand.imageUrl,
+        },
+      });
+      return acc;
+    }, {});
+
+    return groupedVotes;
   }
 }
