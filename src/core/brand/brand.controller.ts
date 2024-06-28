@@ -89,7 +89,7 @@ export class BrandController {
   @UseGuards(AuthorizationGuard)
   async voteBrands(
     @Session() user: CurrentUser,
-    @Body() { ids }: { ids: string[] },
+    @Body() { ids }: { ids: number[] },
     @Res() res: Response,
   ): Promise<Response> {
     try {

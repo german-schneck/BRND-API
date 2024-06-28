@@ -10,26 +10,26 @@ import {
   OneToMany,
 } from 'typeorm';
 
-import { BrandTags } from '../BrandTags';
+import { Brand } from '../Brand';
 
 /**
- * @class Tag
- * @classdesc Tag class represents a Tag in the system.
+ * @class Brand
+ * @classdesc Brand class represents a brand in the system.
  */
-@Entity({ name: 'tags' })
-export class Tag {
+@Entity({ name: 'categories' })
+export class Category {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
   name: string;
 
+  @OneToMany(() => Brand, (brand) => brand.category)
+  brands: Brand[];
+
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @OneToMany(() => BrandTags, (brandTags) => brandTags.brand)
-  brandTags: BrandTags[];
 }

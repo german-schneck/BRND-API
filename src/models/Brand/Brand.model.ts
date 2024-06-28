@@ -8,10 +8,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
 
 import { UserBrandVotes } from '../UserBrandVotes';
 import { BrandTags } from '../BrandTags';
+import { Category } from '../Category';
 
 /**
  * @class Brand
@@ -19,8 +21,8 @@ import { BrandTags } from '../BrandTags';
  */
 @Entity({ name: 'brands' })
 export class Brand {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   name: string;
@@ -29,7 +31,13 @@ export class Brand {
   url: string;
 
   @Column()
+  warpcastUrl: string;
+
+  @Column()
   description: string;
+
+  @ManyToOne(() => Category, (category) => category.brands)
+  category: Category;
 
   @Column()
   followerCount: number;
@@ -38,7 +46,16 @@ export class Brand {
   imageUrl: string;
 
   @Column()
+  profile: string;
+
+  @Column()
+  channel: string;
+
+  @Column()
   score: number;
+
+  @Column()
+  stateScore: number;
 
   @CreateDateColumn()
   createdAt: Date;

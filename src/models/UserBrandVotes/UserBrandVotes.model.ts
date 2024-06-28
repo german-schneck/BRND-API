@@ -12,8 +12,8 @@ import { Brand } from '../Brand';
  */
 @Entity({ name: 'user_brand_votes' })
 export class UserBrandVotes {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @ManyToOne(() => User, (user) => user.userBrandVotes)
   user: User;

@@ -12,8 +12,8 @@ import { Tag } from '../Tag';
  */
 @Entity({ name: 'brand_tags' })
 export class BrandTags {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @ManyToOne(() => Tag, (tag) => tag.brandTags)
   tag: Tag;
