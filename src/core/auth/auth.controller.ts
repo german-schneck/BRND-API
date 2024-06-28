@@ -19,7 +19,7 @@ import { UserService } from '../user/services';
 
 // Security
 import { AuthorizationGuard } from '../../security/guards';
-// import { getConfig } from '../../security/config';
+import { getConfig } from '../../security/config';
 import { Session, User } from '../../security/decorators';
 
 // Utils
@@ -68,16 +68,22 @@ export class AuthController {
 
       const { user, isCreated, token } = data;
 
+      // Determine if the user has voted today.
+      const unixDate = Math.floor(Date.now() / 1000);
+      const votesToday = await this.userService.getUserVotes(user.id, unixDate);
+      const hasVotedToday = !!votesToday.length;
+
       res.cookie('Authorization', token, {
         maxAge: 6 * 60 * 60 * 1000, // 6 hours
-        // httpOnly: true,
-        // sameSite: 'lax',
-        // secure: true,
-        // domain: getConfig().session.domain,
+        httpOnly: true,
+        sameSite: 'lax',
+        secure: true,
+        domain: getConfig().session.domain,
       });
 
       return hasResponse(res, {
         isCreated,
+        hasVotedToday,
         user: {
           fid: user.fid.toString(),
           username: user.username,
@@ -141,7 +147,12 @@ export class AuthController {
         'createdAt',
       ]);
 
-      return hasResponse(res, user);
+      // Determine if the user has voted today.
+      const unixDate = Math.floor(Date.now() / 1000);
+      const votesToday = await this.userService.getUserVotes(user.id, unixDate);
+      const hasVotedToday = !!votesToday.length;
+
+      return hasResponse(res, { ...user, hasVotedToday });
     } catch (error) {
       return hasError(
         res,

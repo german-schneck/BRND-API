@@ -75,11 +75,11 @@ export class BrandService {
       skip,
       take: limit,
 
-      ...(hasSearch && {
-        where: {
+      where: {
+        ...(hasSearch && {
           name: Like(`%${searchName}%`),
-        },
-      }),
+        }),
+      },
 
       ...(relations.length > 0 && {
         relations,
