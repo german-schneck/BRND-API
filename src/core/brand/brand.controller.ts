@@ -62,7 +62,7 @@ export class BrandController {
     @Res() res: Response,
   ) {
     const [brands, count] = await this.brandService.getAll(
-      ['id', 'name', 'url', 'imageUrl'],
+      ['id', 'name', 'url', 'imageUrl', 'profile', 'channel'],
       [],
       order,
       search,
@@ -104,6 +104,8 @@ export class BrandController {
             id: vote.brand.id,
             name: vote.brand.name,
             imageUrl: vote.brand.imageUrl,
+            profile: vote.brand.profile,
+            channel: vote.brand.channel,
           },
         })),
       );
