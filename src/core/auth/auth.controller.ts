@@ -144,6 +144,7 @@ export class AuthController {
         'id',
         'username',
         'photoUrl',
+        'points',
         'createdAt',
       ]);
 
