@@ -123,6 +123,8 @@ export class UserController {
           id: vote.brand.id,
           name: vote.brand.name,
           imageUrl: vote.brand.imageUrl,
+          channel: vote.brand.channel,
+          profile: vote.brand.profile,
         },
       })),
     );
