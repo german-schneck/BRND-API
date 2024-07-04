@@ -12,18 +12,21 @@ import { Brand } from '../Brand';
  */
 @Entity({ name: 'user_brand_votes' })
 export class UserBrandVotes {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => User, (user) => user.userBrandVotes)
   user: User;
 
-  @ManyToOne(() => Brand, (brand) => brand.userBrandVotes)
-  brand: Brand;
+  @ManyToOne(() => Brand, (brand) => brand.userBrandVotes1)
+  brand1: Brand;
+
+  @ManyToOne(() => Brand, (brand) => brand.userBrandVotes2)
+  brand2: Brand;
+
+  @ManyToOne(() => Brand, (brand) => brand.userBrandVotes3)
+  brand3: Brand;
 
   @Column()
   date: Date;
-
-  @Column()
-  position: number;
 }

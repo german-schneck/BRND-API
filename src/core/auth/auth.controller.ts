@@ -71,7 +71,7 @@ export class AuthController {
       // Determine if the user has voted today.
       const unixDate = Math.floor(Date.now() / 1000);
       const votesToday = await this.userService.getUserVotes(user.id, unixDate);
-      const hasVotedToday = !!votesToday.length;
+      const hasVotedToday = !!votesToday;
 
       res.cookie('Authorization', token, {
         maxAge: 6 * 60 * 60 * 1000, // 6 hours
@@ -151,7 +151,7 @@ export class AuthController {
       // Determine if the user has voted today.
       const unixDate = Math.floor(Date.now() / 1000);
       const votesToday = await this.userService.getUserVotes(user.id, unixDate);
-      const hasVotedToday = !!votesToday.length;
+      const hasVotedToday = !!votesToday;
 
       return hasResponse(res, { ...user, hasVotedToday });
     } catch (error) {

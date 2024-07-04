@@ -109,24 +109,10 @@ export class UserController {
     @Param('unixDate') unixDate: string,
     @Res() res: Response,
   ) {
-    const votes = await this.userService.getUserVotes(
+    const vote = await this.userService.getUserVotes(
       session.id,
       Number(unixDate),
     );
-    hasResponse(
-      res,
-      votes.map((vote) => ({
-        id: vote.id,
-        date: vote.date,
-        position: vote.position,
-        brand: {
-          id: vote.brand.id,
-          name: vote.brand.name,
-          imageUrl: vote.brand.imageUrl,
-          channel: vote.brand.channel,
-          profile: vote.brand.profile,
-        },
-      })),
-    );
+    hasResponse(res, vote);
   }
 }

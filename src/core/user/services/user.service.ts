@@ -205,12 +205,12 @@ export class UserService {
    *
    * @param {User['id']} id - The ID of the user whose votes are to be retrieved.
    * @param {number} unixDate - The Unix timestamp representing the day for which votes are to be retrieved.
-   * @returns {Promise<UserBrandVotes[]>} A promise that resolves to an array of the user's votes for the specified day.
+   * @returns {Promise<UserBrandVotes>} A promise that resolves to an object of the user's votes for the specified day.
    */
   async getUserVotes(
     id: User['id'],
     unixDate: number,
-  ): Promise<UserBrandVotes[]> {
+  ): Promise<UserBrandVotes> {
     const date = new Date(unixDate * 1000);
     const startDate = new Date(date.setHours(0, 0, 0, 0));
     const endDate = new Date(date.setHours(23, 59, 59, 999));
@@ -223,63 +223,84 @@ export class UserService {
           date: Between(startDate, endDate),
         },
       },
-      relations: ['userBrandVotes', 'userBrandVotes.brand'],
+      relations: ['userBrandVotes'],
     });
 
-    const userBrandVotes = user
-      ? user.userBrandVotes.sort((a, b) => a.position - b.position)
-      : [];
+    const userBrandVotes = user ? user.userBrandVotes[0] : undefined;
 
     return userBrandVotes;
   }
+
+  /**
+   * Retrieves the votes of a user for an id.
+   *
+   * @param {User['id']} id - The ID of the user whose votes are to be retrieved.
+   * @param {number} unixDate - The Unix timestamp representing the day for which votes are to be retrieved.
+   * @returns {Promise<UserBrandVotes>} A promise that resolves to an object of the user's votes for the specified day.
+   */
+  async getUserVotesById(id: UserBrandVotes['id']): Promise<UserBrandVotes> {
+    const userBrandVotes = await this.userBrandVotesRepository.findOne({
+      select: ['id', 'user', 'brand1', 'brand2', 'brand3', 'date'],
+      where: {
+        id,
+      },
+      relations: ['userBrandVotes.user', 'userBrandVotes.brand'],
+    });
+
+    return userBrandVotes;
+  }
+
   /**
    * Retrieves the vote history of a user, grouped by day.
    *
    * @param {User['id']} userId - The ID of the user whose vote history is to be retrieved.
-   * @param {number} [pageId=1] - The page number to retrieve.
-   * @param {number} [limit=60] - The number of votes to retrieve per page.
-   * @returns {Promise<{count: number, data: Record<string, UserBrandVotes[]>}>} A promise that resolves to an object containing the total count of votes and an object where keys are dates and values are arrays of votes for that day.
+   * @returns {Promise<Record<string, UserBrandVotes[]>>} A promise that resolves to an object where keys are dates and values are arrays of votes for that day.
    */
   async getVotesHistory(
     userId: User['id'],
     pageId: number = 1,
-    limit: number = 60,
-  ): Promise<{ count: number; data: Record<string, UserBrandVotes[]> }> {
-    const [votes, count] = await this.userBrandVotesRepository.findAndCount({
-      where: { user: { id: userId } },
-      relations: ['brand'],
-      order: { date: 'DESC' },
-      skip: (pageId - 1) * limit,
-      take: limit,
-    });
+    limit: number = 15,
+  ): Promise<Record<string, UserBrandVotes[]>> {
+    const [votes, totalVotes] =
+      await this.userBrandVotesRepository.findAndCount({
+        where: { user: { id: userId } },
+        relations: ['brand1', 'brand2', 'brand3'],
+        order: { date: 'DESC' },
+        skip: (pageId - 1) * limit,
+        take: limit,
+      });
 
-    if (count === 0) {
+    if (totalVotes === 0) {
       throw new Error(`User with ID ${userId} not found or has no votes.`);
     }
 
-    const data = votes.reduce((acc, vote) => {
+    const groupedVotes = votes.reduce((acc, vote) => {
       const dateKey = vote.date.toISOString().split('T')[0]; // Group by date (YYYY-MM-DD)
       if (!acc[dateKey]) {
-        acc[dateKey] = [];
+        acc[dateKey] = {};
       }
-      acc[dateKey].push({
+      acc[dateKey] = {
         id: vote.id,
         date: vote.date,
-        position: vote.position,
-        brand: {
-          id: vote.brand.id,
-          name: vote.brand.name,
-          imageUrl: vote.brand.imageUrl,
-          score: vote.brand.score,
-          stateScore: vote.brand.stateScore,
+        brand1: {
+          id: vote.brand1.id,
+          name: vote.brand1.name,
+          imageUrl: vote.brand1.imageUrl,
         },
-      });
+        brand2: {
+          id: vote.brand2.id,
+          name: vote.brand2.name,
+          imageUrl: vote.brand2.imageUrl,
+        },
+        brand3: {
+          id: vote.brand3.id,
+          name: vote.brand3.name,
+          imageUrl: vote.brand3.imageUrl,
+        },
+      };
       return acc;
     }, {});
 
-    return {
-      count,
-      data,
-    };
+    return groupedVotes;
   }
 }

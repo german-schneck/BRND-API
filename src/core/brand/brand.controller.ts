@@ -103,21 +103,7 @@ export class BrandController {
   ): Promise<Response> {
     try {
       const votes = await this.brandService.voteForBrands(user.id, ids);
-      return hasResponse(
-        res,
-        votes.map((vote) => ({
-          id: vote.id,
-          date: vote.date,
-          position: vote.position,
-          brand: {
-            id: vote.brand.id,
-            name: vote.brand.name,
-            imageUrl: vote.brand.imageUrl,
-            profile: vote.brand.profile,
-            channel: vote.brand.channel,
-          },
-        })),
-      );
+      return hasResponse(res, votes);
     } catch (error) {
       return hasError(
         res,

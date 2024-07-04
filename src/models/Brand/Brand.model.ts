@@ -63,8 +63,14 @@ export class Brand {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => UserBrandVotes, (userBrandVotes) => userBrandVotes.brand)
-  userBrandVotes: UserBrandVotes[];
+  @OneToMany(() => UserBrandVotes, (userBrandVotes) => userBrandVotes.brand1)
+  userBrandVotes1: UserBrandVotes[];
+
+  @OneToMany(() => UserBrandVotes, (userBrandVotes) => userBrandVotes.brand2)
+  userBrandVotes2: UserBrandVotes[];
+
+  @OneToMany(() => UserBrandVotes, (userBrandVotes) => userBrandVotes.brand3)
+  userBrandVotes3: UserBrandVotes[];
 
   @OneToMany(() => BrandTags, (brandTags) => brandTags.brand)
   brandTags: BrandTags[];

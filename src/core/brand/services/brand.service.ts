@@ -122,12 +122,12 @@ export class BrandService {
    * @throws Will throw an error if `brandIds` is not an array of length 3.
    * @throws Will throw an error if one or more of the selected brands do not exist.
    * @throws Will throw an error if the user has already voted today.
-   * @returns {Promise<UserVote[]>} A promise that resolves to the user's votes for the current day.
+   * @returns {Promise<UserVote>} A promise that resolves to the user's vote for the current day.
    */
   async voteForBrands(
     userId: User['id'],
     brandIds: Brand['id'][],
-  ): Promise<UserBrandVotes[]> {
+  ): Promise<UserBrandVotes> {
     // We verify that the brandId is appropriate and meets the voting criteria.
     if (!Array.isArray(brandIds) || brandIds.length !== 3) {
       throw new Error(
@@ -145,27 +145,31 @@ export class BrandService {
     const currentDate = Math.floor(new Date().getTime() / 1000);
     const todayVotes = await this.userService.getUserVotes(userId, currentDate);
 
-    if (todayVotes.length !== 0) {
+    if (todayVotes !== undefined) {
       throw new Error('You have already voted today.');
     }
 
     // If everything has gone well, proceed to vote.
-    for (const [index, brandId] of brandIds.entries()) {
-      const vote = this.userBrandVotesRepository.create({
-        user: {
-          id: userId,
-        },
-        brand: {
-          id: brandId,
-        },
-        date: new Date(),
-        position: index + 1,
-      });
-      await this.userBrandVotesRepository.save(vote);
-    }
+    const vote = this.userBrandVotesRepository.create({
+      user: {
+        id: userId,
+      },
+      brand1: {
+        id: brandIds[0],
+      },
+      brand2: {
+        id: brandIds[1],
+      },
+      brand3: {
+        id: brandIds[2],
+      },
+      date: new Date(),
+    });
+
+    const savedVote = await this.userBrandVotesRepository.save(vote);
 
     await this.userService.addPoints(userId, 3);
 
-    return await this.userService.getUserVotes(userId, currentDate);
+    return savedVote;
   }
 }
