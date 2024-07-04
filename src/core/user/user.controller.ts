@@ -91,6 +91,7 @@ export class UserController {
     @Res() res: Response,
   ) {
     const history = await this.userService.getVotesHistory(id, pageId, limit);
+
     return hasResponse(res, history);
   }
 

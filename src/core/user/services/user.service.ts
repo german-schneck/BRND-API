@@ -223,7 +223,12 @@ export class UserService {
           date: Between(startDate, endDate),
         },
       },
-      relations: ['userBrandVotes'],
+      relations: [
+        'userBrandVotes',
+        'userBrandVotes.brand1',
+        'userBrandVotes.brand2',
+        'userBrandVotes.brand3',
+      ],
     });
 
     const userBrandVotes = user ? user.userBrandVotes[0] : undefined;
@@ -254,23 +259,24 @@ export class UserService {
    * Retrieves the vote history of a user, grouped by day.
    *
    * @param {User['id']} userId - The ID of the user whose vote history is to be retrieved.
-   * @returns {Promise<Record<string, UserBrandVotes[]>>} A promise that resolves to an object where keys are dates and values are arrays of votes for that day.
+   * @param {number} [pageId=1] - The page number for pagination.
+   * @param {number} [limit=15] - The number of records to retrieve per page.
+   * @returns {Promise<{ count: number; data: Record<string, UserBrandVotes[]> }>} A promise that resolves to an object containing the total count of votes and a record where keys are dates and values are arrays of votes for that day.
    */
   async getVotesHistory(
     userId: User['id'],
     pageId: number = 1,
     limit: number = 15,
-  ): Promise<Record<string, UserBrandVotes[]>> {
-    const [votes, totalVotes] =
-      await this.userBrandVotesRepository.findAndCount({
-        where: { user: { id: userId } },
-        relations: ['brand1', 'brand2', 'brand3'],
-        order: { date: 'DESC' },
-        skip: (pageId - 1) * limit,
-        take: limit,
-      });
+  ): Promise<{ count: number; data: Record<string, UserBrandVotes[]> }> {
+    const [votes, count] = await this.userBrandVotesRepository.findAndCount({
+      where: { user: { id: userId } },
+      relations: ['brand1', 'brand2', 'brand3'],
+      order: { date: 'DESC' },
+      skip: (pageId - 1) * limit,
+      take: limit,
+    });
 
-    if (totalVotes === 0) {
+    if (count === 0) {
       throw new Error(`User with ID ${userId} not found or has no votes.`);
     }
 
@@ -301,6 +307,9 @@ export class UserService {
       return acc;
     }, {});
 
-    return groupedVotes;
+    return {
+      count,
+      data: groupedVotes,
+    };
   }
 }
