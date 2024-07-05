@@ -292,16 +292,25 @@ export class UserService {
           id: vote.brand1.id,
           name: vote.brand1.name,
           imageUrl: vote.brand1.imageUrl,
+          score: vote.brand1.score,
+          stateScore: vote.brand1.stateScore,
+          ranking: vote.brand1.ranking,
         },
         brand2: {
           id: vote.brand2.id,
           name: vote.brand2.name,
           imageUrl: vote.brand2.imageUrl,
+          score: vote.brand1.score,
+          stateScore: vote.brand2.stateScore,
+          ranking: vote.brand2.ranking,
         },
         brand3: {
           id: vote.brand3.id,
           name: vote.brand3.name,
           imageUrl: vote.brand3.imageUrl,
+          score: vote.brand1.score,
+          stateScore: vote.brand3.stateScore,
+          ranking: vote.brand3.ranking,
         },
       };
       return acc;

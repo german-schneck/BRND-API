@@ -71,6 +71,7 @@ export class BrandController {
         'channel',
         'stateScore',
         'score',
+        'ranking',
       ],
       [],
       order,

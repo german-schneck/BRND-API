@@ -52,6 +52,9 @@ export class Brand {
   channel: string;
 
   @Column()
+  ranking: string;
+
+  @Column()
   score: number;
 
   @Column()
