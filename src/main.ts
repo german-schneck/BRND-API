@@ -81,7 +81,7 @@ async function bootstrap() {
 
     await app.listen(getConfig().runtime.port);
 
-    void getConfig().startup();
+    getConfig().startup();
   } catch (e) {
     logger.error(e);
   }
