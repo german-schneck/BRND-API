@@ -112,7 +112,7 @@ type Domains = Record<'LOCAL' | 'STAGING' | 'PRO', string[]>;
 const domains: Domains = {
   LOCAL: ['http://127.0.0.1:5173', 'http://localhost:5173'],
   STAGING: [],
-  PRO: [getConfig().runtime.host],
+  PRO: ['https://brnd.land', 'https://api.brnd.land'],
 };
 
 export default domains;
