@@ -38,7 +38,7 @@ export class BrandController {
    */
   @Get('/brand/:id')
   getBrandById(@Param('id') id: Brand['id']): Promise<Brand | undefined> {
-    return this.brandService.getById(id);
+    return this.brandService.getById(id, [], ['category']);
   }
 
   /**
