@@ -37,7 +37,6 @@ export class BrandController {
    * @returns {Promise<Brand | undefined>} The brand entity or undefined if not found.
    */
   @Get('/brand/:id')
-  @UseGuards(AuthorizationGuard)
   getBrandById(@Param('id') id: Brand['id']): Promise<Brand | undefined> {
     return this.brandService.getById(id);
   }
