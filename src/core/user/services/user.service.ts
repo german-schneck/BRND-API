@@ -237,25 +237,6 @@ export class UserService {
   }
 
   /**
-   * Retrieves the votes of a user for an id.
-   *
-   * @param {User['id']} id - The ID of the user whose votes are to be retrieved.
-   * @param {number} unixDate - The Unix timestamp representing the day for which votes are to be retrieved.
-   * @returns {Promise<UserBrandVotes>} A promise that resolves to an object of the user's votes for the specified day.
-   */
-  async getUserVotesById(id: UserBrandVotes['id']): Promise<UserBrandVotes> {
-    const userBrandVotes = await this.userBrandVotesRepository.findOne({
-      select: ['id', 'user', 'brand1', 'brand2', 'brand3', 'date'],
-      where: {
-        id,
-      },
-      relations: ['userBrandVotes.user', 'userBrandVotes.brand'],
-    });
-
-    return userBrandVotes;
-  }
-
-  /**
    * Retrieves the vote history of a user, grouped by day.
    *
    * @param {User['id']} userId - The ID of the user whose vote history is to be retrieved.
