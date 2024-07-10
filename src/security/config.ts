@@ -117,7 +117,12 @@ type Domains = Record<'LOCAL' | 'STAGING' | 'PRO', string[]>;
 const domains: Domains = {
   LOCAL: ['http://127.0.0.1:5173', 'http://localhost:5173'],
   STAGING: [],
-  PRO: ['https://brnd.land', 'https://www.brnd.land'],
+  PRO: [
+    'https://brnd.land',
+    'https://www.brnd.land',
+    'https://frame.brnd.land',
+    'https://brnd-frame.azurewebsites.net',
+  ],
 };
 
 export default domains;
