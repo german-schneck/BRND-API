@@ -30,7 +30,7 @@ import {
       database: getConfig().db.name,
       entities: [User, Category, Brand, Tag, UserBrandVotes, BrandTags],
       synchronize: true,
-      logging: 'all',
+      logging: getConfig().isProduction ? false : 'all',
       extra: {
         insecureAuth: true,
       },
