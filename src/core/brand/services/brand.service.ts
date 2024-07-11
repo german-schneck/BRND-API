@@ -77,7 +77,7 @@ export class BrandService {
 
       where: {
         ...(hasSearch && {
-          name: Like(`%${searchName}%`),
+          name: Like(`${searchName}%`),
         }),
       },
 
@@ -93,7 +93,7 @@ export class BrandService {
 
       ...(order === 'trending' && {
         order: {
-          followerCount: 'DESC',
+          score: 'DESC',
         },
       }),
     });
