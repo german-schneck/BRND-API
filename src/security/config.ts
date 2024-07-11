@@ -36,6 +36,9 @@ export const getConfig = () => ({
     password: process.env.DATABASE_PASSWORD,
     requireSSL: process.env.DATABASE_SSL === 'true' || false,
   },
+  neynar: {
+    apiKey: process.env.NEYNAR_API_KEY || '',
+  },
   tools: {},
   startup: () => {
     logger.log(`
