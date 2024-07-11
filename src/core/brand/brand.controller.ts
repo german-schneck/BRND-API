@@ -13,7 +13,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Response } from 'express';
 
 // Services
-import { BrandOrderType, BrandService } from './services';
+import { BrandOrderType, BrandResponse, BrandService } from './services';
 
 // Models
 import { Brand, CurrentUser } from '../../models';
@@ -37,7 +37,9 @@ export class BrandController {
    * @returns {Promise<Brand | undefined>} The brand entity or undefined if not found.
    */
   @Get('/brand/:id')
-  getBrandById(@Param('id') id: Brand['id']): Promise<Brand | undefined> {
+  getBrandById(
+    @Param('id') id: Brand['id'],
+  ): Promise<BrandResponse | undefined> {
     return this.brandService.getById(id, [], ['category']);
   }
 

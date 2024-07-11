@@ -9,7 +9,10 @@ import { Brand, UserBrandVotes } from '../../../models';
 // Services
 import { UserService } from '../../user/services';
 import { User } from '../../../security/decorators';
-import { BrandOrderType } from '.';
+import NeynarService from '../../../utils/neynar';
+
+// Types
+import { BrandOrderType, BrandResponse } from '.';
 
 @Injectable()
 export class BrandService {
@@ -29,14 +32,14 @@ export class BrandService {
    * @param {Brand['id']} id - The ID of the brand to retrieve.
    * @param {(keyof Brand)[]} [select=[]] - Optional array of fields to select.
    * @param {(keyof Brand)[]} [relations=[]] - Optional array of relations to include.
-   * @returns {Promise<Brand | undefined>} The brand entity or undefined if not found.
+   * @returns {Promise<BrandResponse | undefined>} The brand entity or undefined if not found.
    */
   async getById(
     id: Brand['id'],
     select: (keyof Brand)[] = [],
     relations: (keyof Brand)[] = [],
-  ): Promise<Brand | undefined> {
-    return this.brandRepository.findOne({
+  ): Promise<BrandResponse | undefined> {
+    const brand = await this.brandRepository.findOne({
       ...(select.length > 0 && {
         select,
       }),
@@ -47,6 +50,14 @@ export class BrandService {
         relations,
       }),
     });
+
+    const neynar = new NeynarService();
+    const info =
+      brand.channel !== ''
+        ? await neynar.getTrendingCastInAChannel(brand.channel)
+        : await neynar.getTrendingCastInAProfile(brand.profile);
+
+    return { brand, casts: info };
   }
 
   /**
