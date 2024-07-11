@@ -35,6 +35,7 @@ export default class NeynarService {
           creatorPowerBadge: cast.author.power_badge,
           text: cast.text,
           image: cast.embeds.length > 0 ? cast.embeds[0]['url'] : '',
+          warpcastUrl: `https://warpcast.com/${cast.author.username}/${cast.hash.slice(0, 10)}`,
         });
       }
     } catch (e) {
@@ -71,6 +72,7 @@ export default class NeynarService {
             creatorPowerBadge: cast.author.power_badge,
             text: cast.text,
             image: cast.embeds.length > 0 ? cast.embeds[0]['url'] : '',
+            warpcastUrl: `https://warpcast.com/${cast.author.username}/${cast.hash.slice(0, 10)}`,
           });
         }
       }

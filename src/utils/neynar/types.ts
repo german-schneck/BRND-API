@@ -4,4 +4,5 @@ export type CastResponse = {
   creatorPowerBadge: boolean;
   text: string;
   image?: string;
+  warpcastUrl: string;
 };
