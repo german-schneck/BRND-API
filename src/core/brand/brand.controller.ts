@@ -127,11 +127,22 @@ export class BrandController {
    */
   @Post('/request')
   @UseGuards(AuthorizationGuard)
-  async requestNewBrand(
+  async requestBrand(
     @Session() user: CurrentUser,
-    @Body() body: { name: string },
-  ) {
-    console.log({ user, body });
+    @Body() { name }: { name: string },
+    @Res() res: Response,
+  ): Promise<Response> {
+    try {
+      console.log(name, user);
+      return hasResponse(res, {});
+    } catch (error) {
+      return hasError(
+        res,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        'voteBrands',
+        error.toString(),
+      );
+    }
   }
 
   /**
