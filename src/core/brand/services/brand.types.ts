@@ -1,6 +1,6 @@
 import { Brand } from '../../../models/Brand';
 
-export type BrandOrderType = 'all' | 'new' | 'trending';
+export type BrandOrderType = 'top' | 'new' | 'all';
 
 export type BrandCast = {
   creator: string;

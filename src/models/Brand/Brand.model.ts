@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToOne,
+  Unique,
 } from 'typeorm';
 
 import { UserBrandVotes } from '../UserBrandVotes';
@@ -20,6 +21,7 @@ import { Category } from '../Category';
  * @classdesc Brand class represents a brand in the system.
  */
 @Entity({ name: 'brands' })
+@Unique(['name'])
 export class Brand {
   @PrimaryGeneratedColumn()
   id: number;
@@ -59,6 +61,17 @@ export class Brand {
 
   @Column()
   stateScore: number;
+
+  @Column()
+  scoreWeek: number;
+
+  @Column()
+  stateScoreWeek: number;
+
+  @Column({
+    default: 0,
+  })
+  banned: number;
 
   @CreateDateColumn()
   createdAt: Date;

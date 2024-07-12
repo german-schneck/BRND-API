@@ -96,15 +96,22 @@ export class BrandService {
         relations,
       }),
 
+      ...(order === 'all' && {
+        order: {
+          name: 'ASC',
+        },
+      }),
+
       ...(order === 'new' && {
         order: {
           createdAt: 'DESC',
         },
       }),
 
-      ...(order === 'trending' && {
+      ...(order === 'top' && {
         order: {
-          score: 'DESC',
+          scoreWeek: 'DESC',
+          followerCount: 'DESC',
         },
       }),
     });
