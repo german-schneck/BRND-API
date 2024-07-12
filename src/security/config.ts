@@ -121,6 +121,8 @@ const domains: Domains = {
   LOCAL: ['http://127.0.0.1:5173', 'http://localhost:5173'],
   STAGING: [],
   PRO: [
+    'http://127.0.0.1:5173',
+    'http://localhost:5173',
     'https://brnd.land',
     'https://www.brnd.land',
     'https://frame.brnd.land',
