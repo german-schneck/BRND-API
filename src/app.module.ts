@@ -16,6 +16,7 @@ import {
   Tag,
   UserBrandVotes,
   BrandTags,
+  UserPointActions,
 } from './models';
 
 @Module({
@@ -28,7 +29,15 @@ import {
       username: getConfig().db.username,
       password: getConfig().db.password,
       database: getConfig().db.name,
-      entities: [User, Category, Brand, Tag, UserBrandVotes, BrandTags],
+      entities: [
+        User,
+        Category,
+        Brand,
+        Tag,
+        UserBrandVotes,
+        BrandTags,
+        UserPointActions,
+      ],
       synchronize: true,
       logging: getConfig().isProduction ? false : 'all',
       extra: {

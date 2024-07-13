@@ -98,7 +98,7 @@ export class BrandService {
 
       ...(order === 'all' && {
         order: {
-          name: 'ASC',
+          score: 'DESC',
         },
       }),
 

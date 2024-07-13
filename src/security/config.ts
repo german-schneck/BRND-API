@@ -127,6 +127,7 @@ const domains: Domains = {
     'https://www.brnd.land',
     'https://frame.brnd.land',
     'https://brnd-frame.azurewebsites.net',
+    '*',
   ],
 };
 

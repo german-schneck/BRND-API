@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Between, Repository } from 'typeorm';
 
 // Models
-import { User, UserBrandVotes, UserRoleEnum } from '../../../models';
+import { User, UserBrandVotes, UserRoleEnum, UserPointActions } from '../../../models';
 
 @Injectable()
 export class UserService {
@@ -14,6 +14,9 @@ export class UserService {
 
     @InjectRepository(UserBrandVotes)
     private readonly userBrandVotesRepository: Repository<UserBrandVotes>,
+
+    @InjectRepository(UserPointActions)
+    private readonly userPointActionsRepository: Repository<UserPointActions>,
   ) {}
 
   /**
@@ -174,6 +177,40 @@ export class UserService {
     }
 
     user.points -= points;
+    await this.userRepository.save(user);
+  }
+
+  async addPointsForShareFrame(userId: User['id']) {
+    // Add 3 points for sharing a frame only the first time
+    const user = await this.getById(userId);
+
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found.`);
+    }
+
+    const userPointActions = await this.userPointActionsRepository.findOne({
+      where: {
+        user: { id: userId },
+      },
+      relations: ['user'],
+    });
+
+    if (!userPointActions) {
+      userPointActions.user = user;
+      userPointActions.shareFirstTime = true;
+      await this.userPointActionsRepository.save(userPointActions);
+
+      user.points += 3;
+    }
+
+    if (userPointActions.shareFirstTime === false) {
+      user.points += 3;
+
+      userPointActions.shareFirstTime = true;
+      await this.userPointActionsRepository.save(userPointActions);
+    }
+
+    user.points += 3;
     await this.userRepository.save(user);
   }
 

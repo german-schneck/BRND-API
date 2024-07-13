@@ -116,4 +116,10 @@ export class UserController {
     );
     hasResponse(res, vote);
   }
+
+  @Patch('/user/share-frame/:id')
+  @UseGuards(AdminGuard)
+  addPointsForShareFrame(@Param('id') id: User['id']) {
+    return this.userService.addPointsForShareFrame(id);
+  }
 }

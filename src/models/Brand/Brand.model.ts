@@ -71,6 +71,16 @@ export class Brand {
   @Column({
     default: 0,
   })
+  rankingWeek: number;
+
+  @Column({
+    default: 0,
+  })
+  bonusPoints: number;
+
+  @Column({
+    default: 0,
+  })
   banned: number;
 
   @CreateDateColumn()

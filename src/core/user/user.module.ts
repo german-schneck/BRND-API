@@ -9,9 +9,11 @@ import { UserController } from './user.controller';
 import { UserService } from './services';
 
 // Models
-import { Brand, User, UserBrandVotes } from '../../models';
+import { Brand, User, UserBrandVotes, UserPointActions } from '../../models';
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Brand, UserBrandVotes])],
+  imports: [
+    TypeOrmModule.forFeature([User, Brand, UserBrandVotes, UserPointActions]),
+  ],
   controllers: [UserController],
   providers: [UserService],
 })
