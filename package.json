@@ -32,8 +32,6 @@
     "csurf": "^1.11.0",
     "date-fns": "^3.6.0",
     "ethers": "^6.13.0",
-    "express-rate-limit": "^7.3.1",
-    "express-session": "^1.18.0",
     "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.10.0",

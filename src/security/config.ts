@@ -1,5 +1,4 @@
 import { Logger } from '@nestjs/common';
-import { Options } from 'express-rate-limit';
 
 const logger = new Logger('APISystem');
 
@@ -70,26 +69,6 @@ export const getConfig = () => ({
   `);
   },
 });
-
-const quarterOfAnHour: number = 15 * 60 * 1000;
-const numberOfRequestsBeforeBan = 100;
-const returnedMessage = 'Too many requests sent from this IP Address';
-
-/**
- * Configuration object for rate limiting requests.
- * @property {number} windowMs - The time frame for which requests are checked/remembered.
- * @property {number} max - The maximum number of connections during `windowMs` milliseconds before sending a 429 response.
- * @property {string} message - The message sent in the response body when the limit is reached.
- * @property {boolean | EnabledValidations} validate - The list of validation checks that should run.
- */
-export const rateLimitConfigObject: Partial<Options> = {
-  windowMs: quarterOfAnHour,
-  max: numberOfRequestsBeforeBan,
-  message: returnedMessage,
-  validate: {
-    xForwardedForHeader: false,
-  },
-};
 
 /**
  * Configuration options for CSRF protection middleware.

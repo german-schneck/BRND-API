@@ -20,17 +20,11 @@ import { NextFunction, Request, Response } from 'express';
 
 // Authentication
 import * as cookieParser from 'cookie-parser';
-import * as session from 'express-session';
 
 // Security
 import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
 import * as csurf from 'csurf';
-import domains, {
-  rateLimitConfigObject,
-  csurfConfigOptions,
-  getConfig,
-} from './security/config';
+import domains, { csurfConfigOptions, getConfig } from './security/config';
 import { csrfMiddleware } from './security/middlewares';
 
 // Environment
@@ -49,13 +43,6 @@ async function bootstrap() {
   try {
     const app = await NestFactory.create(AppModule);
 
-    app.use(
-      session({
-        secret: getConfig().session.key,
-        resave: false,
-        saveUninitialized: false,
-      }),
-    );
     app.use(cookieParser(process.env.COOKIE_SECRET));
 
     const csrf = csurf(csurfConfigOptions);
@@ -68,7 +55,6 @@ async function bootstrap() {
       SwaggerModule.setup('doc', app, document);
     } else {
       app.use(helmet());
-      app.use(rateLimit(rateLimitConfigObject));
     }
 
     app.enableCors({

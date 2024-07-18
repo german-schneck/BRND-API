@@ -74,7 +74,7 @@ export class AuthController {
       const hasVotedToday = !!votesToday;
 
       res.cookie('Authorization', token, {
-        maxAge: 6 * 60 * 60 * 1000, // 6 hours
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
         httpOnly: true,
         sameSite: 'lax',
         secure: true,
