@@ -117,6 +117,13 @@ export class UserController {
     hasResponse(res, vote);
   }
 
+  @Get('/brands')
+  @UseGuards(AuthorizationGuard)
+  async getBrands(@Session() session: User, @Res() res: Response) {
+    const vote = await this.userService.getUserBrands(session.id);
+    hasResponse(res, vote);
+  }
+
   @Patch('/user/share-frame/:id')
   @UseGuards(AdminGuard)
   addPointsForShareFrame(@Param('id') id: User['id']) {

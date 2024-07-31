@@ -1,10 +1,16 @@
 // Dependencies
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, Repository } from 'typeorm';
+import { Between, Repository, In } from 'typeorm';
 
 // Models
-import { User, UserBrandVotes, UserRoleEnum, UserPointActions } from '../../../models';
+import {
+  User,
+  UserBrandVotes,
+  UserRoleEnum,
+  UserPointActions,
+  Brand,
+} from '../../../models';
 
 @Injectable()
 export class UserService {
@@ -17,6 +23,9 @@ export class UserService {
 
     @InjectRepository(UserPointActions)
     private readonly userPointActionsRepository: Repository<UserPointActions>,
+
+    @InjectRepository(Brand)
+    private readonly brandRespository: Repository<Brand>,
   ) {}
 
   /**
@@ -338,5 +347,51 @@ export class UserService {
       count,
       data: groupedVotes,
     };
+  }
+
+  async getUserBrands(id: User['id']): Promise<Brand[]> {
+    const sql = `
+        SELECT SUM(Points) AS Points, Brand
+        FROM (
+            SELECT COUNT(brand1Id) * 60 AS Points, brand1Id AS Brand
+            FROM user_brand_votes
+            WHERE userId = ?
+            GROUP BY brand1Id
+            UNION ALL
+            SELECT COUNT(brand2Id) * 30 AS Points, brand2Id AS Brand
+            FROM user_brand_votes
+            WHERE userId = ?
+            GROUP BY brand2Id
+            UNION ALL
+            SELECT COUNT(brand3Id) * 10 AS Points, brand3Id AS Brand
+            FROM user_brand_votes
+            WHERE userId = ?
+            GROUP BY brand3Id
+        ) AS Data
+        GROUP BY Brand
+        ORDER BY Points DESC
+        LIMIT 10
+    `;
+
+    const pointsByBrand = await this.userBrandVotesRepository.query(sql, [
+      id,
+      id,
+      id,
+    ]);
+    const brandIds = pointsByBrand.map((item) => item.Brand);
+    const brands = await this.brandRespository.findBy({
+      id: In(brandIds),
+    });
+
+    // Create JSON object combining points and brand details
+    const brandsWithPoints = pointsByBrand.map((data) => {
+      const brand = brands.find((b) => b.id === data.Brand);
+      return {
+        brand: brand, // Include the full brand details
+        points: Number(data.Points),
+      };
+    });
+
+    return brandsWithPoints;
   }
 }
