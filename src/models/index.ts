@@ -4,4 +4,4 @@ export * from './BrandTags';
 export * from './Tag';
 export * from './UserBrandVotes';
 export * from './Category';
-export * from './UserPointActions';
+export * from './UserDailyActions';

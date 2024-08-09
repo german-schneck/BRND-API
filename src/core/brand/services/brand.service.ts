@@ -53,7 +53,7 @@ export class BrandService {
 
     const neynar = new NeynarService();
     const info =
-      brand.channel !== ''
+      brand.queryType === 0
         ? await neynar.getTrendingCastInAChannel(brand.channel)
         : await neynar.getTrendingCastInAProfile(brand.profile);
 

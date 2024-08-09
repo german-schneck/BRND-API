@@ -10,11 +10,11 @@ import { BrandService } from './services';
 import { UserService } from '../user/services';
 
 // Models
-import { Brand, User, UserBrandVotes, UserPointActions } from '../../models';
+import { Brand, User, UserBrandVotes, UserDailyActions } from '../../models';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Brand, UserBrandVotes, UserPointActions]),
+    TypeOrmModule.forFeature([User, Brand, UserBrandVotes, UserDailyActions]),
   ],
   controllers: [BrandController],
   providers: [BrandService, UserService],

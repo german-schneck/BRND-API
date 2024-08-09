@@ -83,6 +83,9 @@ export class Brand {
   })
   banned: number;
 
+  @Column()
+  queryType: number; // 0: Channel, 1: Profile
+
   @CreateDateColumn()
   createdAt: Date;
 

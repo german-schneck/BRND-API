@@ -8,7 +8,7 @@ import {
   User,
   UserBrandVotes,
   UserRoleEnum,
-  UserPointActions,
+  UserDailyActions,
   Brand,
 } from '../../../models';
 
@@ -21,8 +21,8 @@ export class UserService {
     @InjectRepository(UserBrandVotes)
     private readonly userBrandVotesRepository: Repository<UserBrandVotes>,
 
-    @InjectRepository(UserPointActions)
-    private readonly userPointActionsRepository: Repository<UserPointActions>,
+    @InjectRepository(UserDailyActions)
+    private readonly userDailyActionsRepository: Repository<UserDailyActions>,
 
     @InjectRepository(Brand)
     private readonly brandRespository: Repository<Brand>,
@@ -197,30 +197,29 @@ export class UserService {
       throw new Error(`User with ID ${userId} not found.`);
     }
 
-    const userPointActions = await this.userPointActionsRepository.findOne({
+    let userDailyActions = await this.userDailyActionsRepository.findOne({
       where: {
         user: { id: userId },
       },
       relations: ['user'],
     });
 
-    if (!userPointActions) {
-      userPointActions.user = user;
-      userPointActions.shareFirstTime = true;
-      await this.userPointActionsRepository.save(userPointActions);
-
+    if (!userDailyActions) {
       user.points += 3;
-    }
+      await this.userRepository.save(user);
 
-    if (userPointActions.shareFirstTime === false) {
+      userDailyActions = this.userDailyActionsRepository.create({
+        user: user,
+        shareFirstTime: true,
+      });
+      await this.userDailyActionsRepository.save(userDailyActions);
+    } else if (userDailyActions.shareFirstTime === false) {
       user.points += 3;
+      await this.userRepository.save(user);
 
-      userPointActions.shareFirstTime = true;
-      await this.userPointActionsRepository.save(userPointActions);
+      userDailyActions.shareFirstTime = true;
+      await this.userDailyActionsRepository.save(userDailyActions);
     }
-
-    user.points += 3;
-    await this.userRepository.save(user);
   }
 
   /**

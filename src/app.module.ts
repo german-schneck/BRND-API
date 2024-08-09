@@ -16,7 +16,7 @@ import {
   Tag,
   UserBrandVotes,
   BrandTags,
-  UserPointActions,
+  UserDailyActions,
 } from './models';
 
 @Module({
@@ -36,7 +36,7 @@ import {
         Tag,
         UserBrandVotes,
         BrandTags,
-        UserPointActions,
+        UserDailyActions,
       ],
       synchronize: true,
       logging: getConfig().isProduction ? false : 'all',

@@ -6,11 +6,11 @@ import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { User } from '../User';
 
 /**
- * @class UserPointActions
- * @classdesc UserPointActions class represents the actions the user perform to get points
+ * @class UserDailyActions
+ * @classdesc UserDailyActions class represents the actions the user perform to get points
  */
-@Entity({ name: 'user_point_actions' })
-export class UserPointActions {
+@Entity({ name: 'user_daily_actions' })
+export class UserDailyActions {
   @PrimaryGeneratedColumn()
   id: number;
 

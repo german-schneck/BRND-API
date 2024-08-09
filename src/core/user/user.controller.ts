@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Query,
   Res,
   UseGuards,
@@ -124,9 +125,10 @@ export class UserController {
     hasResponse(res, vote);
   }
 
-  @Patch('/user/share-frame/:id')
-  @UseGuards(AdminGuard)
-  addPointsForShareFrame(@Param('id') id: User['id']) {
-    return this.userService.addPointsForShareFrame(id);
+  @Post('/share-frame')
+  @UseGuards(AuthorizationGuard)
+  addPointsForShareFrame(@Session() session: User, @Res() res: Response) {
+    const response = this.userService.addPointsForShareFrame(session.id);
+    hasResponse(res, response);
   }
 }
