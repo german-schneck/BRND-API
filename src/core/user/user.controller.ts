@@ -127,8 +127,8 @@ export class UserController {
 
   @Post('/share-frame')
   @UseGuards(AuthorizationGuard)
-  addPointsForShareFrame(@Session() session: User, @Res() res: Response) {
-    const response = this.userService.addPointsForShareFrame(session.id);
+  async addPointsForShareFrame(@Session() session: User, @Res() res: Response) {
+    const response = await this.userService.addPointsForShareFrame(session.id);
     hasResponse(res, response);
   }
 }

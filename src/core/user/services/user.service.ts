@@ -189,7 +189,9 @@ export class UserService {
     await this.userRepository.save(user);
   }
 
-  async addPointsForShareFrame(userId: User['id']) {
+  async addPointsForShareFrame(userId: User['id']): Promise<boolean> {
+    let result = false;
+
     // Add 3 points for sharing a frame only the first time
     const user = await this.getById(userId);
 
@@ -213,13 +215,19 @@ export class UserService {
         shareFirstTime: true,
       });
       await this.userDailyActionsRepository.save(userDailyActions);
+
+      result = true;
     } else if (userDailyActions.shareFirstTime === false) {
       user.points += 3;
       await this.userRepository.save(user);
 
       userDailyActions.shareFirstTime = true;
       await this.userDailyActionsRepository.save(userDailyActions);
+
+      result = true;
     }
+
+    return result;
   }
 
   /**
