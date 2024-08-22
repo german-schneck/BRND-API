@@ -1,11 +1,8 @@
 import { NeynarAPIClient } from '@neynar/nodejs-sdk';
 import { CastResponse } from './types';
 import { getConfig } from '../../security/config';
-import {
-  BulkCastsResponse,
-  Channel,
-  SearchedUser,
-} from '@neynar/nodejs-sdk/build/neynar-api/v2';
+import { Channel, SearchedUser } from '@neynar/nodejs-sdk/build/neynar-api/v2';
+import { User } from '@neynar/nodejs-sdk/build/neynar-api/v1';
 
 export default class NeynarService {
   private client: NeynarAPIClient;
@@ -29,12 +26,25 @@ export default class NeynarService {
       });
 
       for (const cast of feed.casts) {
+        let image = '';
+        if (cast.embeds.length > 0) {
+          const embed = cast.embeds[0];
+          if (embed) {
+            const metadata = embed['metadata'];
+            if (metadata) {
+              const contentType = metadata['content_type'];
+              if (contentType && contentType.includes('image/'))
+                image = embed['url'];
+            }
+          }
+        }
+
         response.push({
           creator: cast.author.display_name,
           creatorPfp: cast.author.pfp_url,
           creatorPowerBadge: cast.author.power_badge,
           text: cast.text,
-          image: cast.embeds.length > 0 ? cast.embeds[0]['url'] : '',
+          image,
           warpcastUrl: `https://warpcast.com/${cast.author.username}/${cast.hash.slice(0, 10)}`,
         });
       }
@@ -62,17 +72,37 @@ export default class NeynarService {
       }
 
       if (selectedProfile !== undefined) {
-        const casts: BulkCastsResponse =
-          await this.client.fetchPopularCastsByUser(selectedProfile.fid);
+        const result = await this.client.fetchAllCastsCreatedByUser(
+          selectedProfile.fid,
+          {
+            limit: 5,
+          },
+        );
 
-        for (const cast of casts.casts) {
+        const casts = result.result.casts;
+        for (const cast of casts) {
+          const author = cast.author as unknown as User;
+          let image = '';
+
+          if (cast.embeds.length > 0) {
+            const embed = cast.embeds[0];
+            if (embed) {
+              const metadata = embed['metadata'];
+              if (metadata) {
+                const contentType = metadata['content_type'];
+                if (contentType && contentType.includes('image/'))
+                  image = embed['url'];
+              }
+            }
+          }
+
           response.push({
-            creator: cast.author.display_name,
-            creatorPfp: cast.author.pfp_url,
-            creatorPowerBadge: cast.author.power_badge,
+            creator: author['displayName'],
+            creatorPfp: author['pfp'].url,
+            creatorPowerBadge: author['powerBadge'],
             text: cast.text,
-            image: cast.embeds.length > 0 ? cast.embeds[0]['url'] : '',
-            warpcastUrl: `https://warpcast.com/${cast.author.username}/${cast.hash.slice(0, 10)}`,
+            image,
+            warpcastUrl: `https://warpcast.com/${author.username}/${cast.hash.slice(0, 10)}`,
           });
         }
       }
