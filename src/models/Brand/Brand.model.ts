@@ -35,7 +35,7 @@ export class Brand {
   @Column()
   warpcastUrl: string;
 
-  @Column()
+  @Column({ length: 4096 })
   description: string;
 
   @ManyToOne(() => Category, (category) => category.brands)
