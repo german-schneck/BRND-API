@@ -98,7 +98,7 @@ export default class NeynarService {
 
           response.push({
             creator: author['displayName'],
-            creatorPfp: author['pfp'].url,
+            creatorPfp: author['pfp']?.url,
             creatorPowerBadge: author['powerBadge'],
             text: cast.text,
             image,
